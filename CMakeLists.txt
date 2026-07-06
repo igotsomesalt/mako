@@ -8,4 +8,9 @@ project(Mako
 set(CMAKE_CXX_STANDARD 23)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
-add_subdirectory(core)
+add_subdirectory(apps/mako-cli)
+
+add_subdirectory(libs/core)
+add_subdirectory(libs/graph)
+add_subdirectory(libs/nodes)
+add_subdirectory(libs/runtime)
