@@ -30,3 +30,30 @@
 *.exe
 *.out
 *.app
+
+# Visual Studio
+.vs/
+
+# Build directories
+build/
+out/
+
+# CMake generated files
+CMakeCache.txt
+CMakeFiles/
+cmake_install.cmake
+install_manifest.txt
+compile_commands.json
+
+# Debug symbols
+*.pdb
+*.ilk
+
+# User-specific files
+*.user
+*.suo
+*.vcxproj.user
+
+# OS files
+.DS_Store
+Thumbs.db
