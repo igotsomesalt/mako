@@ -5,3 +5,8 @@ add_library(nodes STATIC
 target_include_directories(nodes
     PUBLIC include
 )
+
+target_link_libraries(nodes
+    PUBLIC
+        core
+)

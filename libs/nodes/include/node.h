@@ -1,0 +1,117 @@
+#pragma once
+
+#include <variant>
+#include <expected>
+#include <optional>
+#include <unordered_map>
+#include <string>
+#include <memory>
+#include <cstdint>
+
+namespace mako::node {
+
+
+    using Id = uint32_t;
+    using ChannelId = uint32_t;
+
+
+    // Native primitive data types.
+    using Value = std::variant<
+        std::string,
+        int,
+        float,
+        bool
+    >;
+
+    
+    // Error type returned by the node.
+    enum class ErrorCode : uint8_t {
+        ExecutionFailed,
+        InitializationFailed,
+        ShutdownFailed,
+        RecoveryFailed,
+        MissingInput,
+    };
+
+    
+    // ______________________________________________________________________
+    // Holds context for execution owned by runtime; the origin, the
+    // destination, and the output data. This is a memory retrieval contract
+    // that must be implemented by all heirs.
+    //
+    // Thread-safety: implementations are assumed to be exclusive to a single
+    // executing node at a time. If the runtime shares a context across
+    // concurrently-executing nodes, the implementation must provide its own
+    // synchronization; this base class makes no such guarantee.
+    class ExecutionContext {
+
+    protected:
+        const Id currentNode;
+
+    public:
+
+        ExecutionContext(Id _currentNode) : currentNode(_currentNode) {};
+        virtual ~ExecutionContext() = default;
+
+        // ______________________________________________________________________
+        // Returns a shared pointer to data owned by the execution context. The
+        // pointer is valid whether or not the current execution context exists.
+        virtual std::expected<std::shared_ptr<const Value>, ErrorCode> input(ChannelId) = 0;
+
+        // Publishes output into the execution context on the given channel.
+        // Single overload taking Value by value: pass an rvalue to move in,
+        // pass an lvalue to copy in. Avoids paying for a copy on the move path.
+        virtual std::expected<void, ErrorCode> output(ChannelId, std::shared_ptr<Value> value) = 0;
+    };
+    
+
+    // ______________________________________________________________________
+    // Determines what if and what type of recovery needs to occur after the
+    // an unexpected closure of the application.
+    enum class DurabilityPolicy : uint8_t {
+        Restartable,
+        Idempotent,
+        RequiresRecovery
+    };
+
+
+    // Traits of the node.
+    struct Traits {
+        DurabilityPolicy durabilityPolicy;
+        bool deterministic;
+        bool cacheable;
+        bool supportsCheckpointing;
+    };
+        
+    
+    // ______________________________________________________________________
+    // Represents a single executable operation in a graph.
+    //
+    // Nodes define one step of a pipeline. They receive data through input
+    // channels, perform some work, and publish results through output 
+    // channels. The runtime executes nodes once all of their dependencies 
+    // have been satisfied.
+    class Node {
+
+    public:
+        const Traits traits;
+
+        explicit Node(Traits _traits) : traits(_traits) {}
+        virtual ~Node() = default;
+
+        // Called prior to execution to initialize internal state.
+        virtual std::expected<void, ErrorCode> initialize() { return {}; }
+
+        // Executes node.
+        virtual std::expected<void, ErrorCode> execute(ExecutionContext&) = 0;
+
+        // Called after execution to shutsdown internal state.
+        virtual std::expected<void, ErrorCode> shutdown() { return {}; }
+
+        // Called after an unexpected shutdown to restore internal state.
+        virtual std::expected<void, ErrorCode> recover() { return {}; }
+
+        // Called after internal state has been restored.
+        virtual std::expected<void, ErrorCode>  resume() { return {}; }
+    };
+}
