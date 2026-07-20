@@ -138,7 +138,7 @@ namespace mako::node {
         virtual ~Node() = default;
 
         // Returns the semantic contract for a node type.
-        virtual const Schema schema() const = 0;
+        virtual constexpr Schema schema() const = 0;
 
         // Called prior to execution to initialize internal state.
         virtual std::expected<void, ErrorCode> initialize() { return {}; }

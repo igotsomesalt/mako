@@ -22,7 +22,7 @@ namespace mako::node {
 		explicit GoalNode(std::string _instruction) : instruction(std::move(_instruction)) {}
 		~GoalNode() = default;
 
-		inline const Schema schema() const override {
+		inline constexpr Schema schema() const override {
 			return {
 				.name = "goal node",
 				.description = "Requests information from the user.",
