@@ -69,18 +69,57 @@ namespace mako::node {
     // Determines what if and what type of recovery needs to occur after the
     // an unexpected closure of the application.
     enum class DurabilityPolicy : uint8_t {
+        None,
         Restartable,
-        Idempotent,
-        RequiresRecovery
+        Recoverable
     };
 
 
     // Traits of the node.
     struct Traits {
-        DurabilityPolicy durabilityPolicy;
         bool deterministic;
+        bool idempotent;
         bool cacheable;
-        bool supportsCheckpointing;
+        bool checkpointable;
+
+        DurabilityPolicy durability;
+    };
+
+    // ______________________________________________________________________
+    // Describes a single property that a node accepts or produces.
+    //
+    // Property schemas define the semantic contract for a value, including 
+    // its purpose, whether it must be provided by the user, whether the AI 
+    // may infer it from available context, any default value, and the prompt 
+    // used to request the information when it cannot be determined 
+    // automatically.
+    struct PropertySchema {
+        std::string name;
+        std::string description;
+
+        bool required;
+        bool inferable;
+
+        std::optional<Value> defaultValue;
+
+        std::string prompt;
+    };
+
+
+    // ______________________________________________________________________
+    // Describes the interface and behavior of a node type.
+    //
+    // A node schema specifies the semantic contract between the node and the 
+    // rest of the graph. It defines the information the node requires 
+    // (inputs), the information it produces (outputs), and the metadata 
+    // needed for the AI to construct, validate, and execute graphs while 
+    // interacting with the user.
+    struct Schema {
+        std::string name;
+        std::string description;
+        Traits traits;
+
+        std::vector<PropertySchema> inputs;
     };
         
     
@@ -94,10 +133,12 @@ namespace mako::node {
     class Node {
 
     public:
-        const Traits traits;
 
-        explicit Node(Traits _traits) : traits(_traits) {}
+        Node() {}
         virtual ~Node() = default;
+
+        // Returns the semantic contract for a node type.
+        virtual const Schema schema() const = 0;
 
         // Called prior to execution to initialize internal state.
         virtual std::expected<void, ErrorCode> initialize() { return {}; }
