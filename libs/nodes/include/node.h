@@ -134,7 +134,7 @@ namespace mako::node {
 
     public:
 
-        Node() {}
+        Node() = default;
         virtual ~Node() = default;
 
         // Returns the semantic contract for a node type.
