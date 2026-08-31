@@ -14,3 +14,5 @@ add_subdirectory(libs/core)
 add_subdirectory(libs/graph)
 add_subdirectory(libs/nodes)
 add_subdirectory(libs/runtime)
+
+set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
