@@ -41,12 +41,49 @@ namespace mako {
 
     };
 
-    // The result of the command execution.
-    struct CommandResult {
-        bool success;
-        int exit_code;
+    // Execution context.
+    class CommandExecutionContext {
+    private:
+        MakoRuntime* runtime;
+        std::ostream* out;
+        std::ostream* err;
 
-        std::string message;
-        std::string error;
-    };  
+        std::vector<std::string> args;
+        bool interactive;
+
+    public:
+        inline MakoRuntime& runtime() {
+            return runtime;
+        }
+
+        inline std::ostream& out() {
+            return out;
+        }
+
+        inline std::ostream& err() {
+            return err;
+        }
+        
+        inline const std::vector<std::string>& args() const {
+            return args;
+        }
+        
+        inline bool interactive() const {
+            return interactive;
+        }
+    }
+
+    // Adds a node to the graph.
+    class AddCommand : public Command {
+    public:
+        
+        explicit AddCommand() :
+            Command(
+                "add", 
+                "Adds a node to the graph"
+            ) {}
+        ~Command() = default;
+
+        const CommandResult execute(const CommandExecutionContext& ctx) const override;
+    }
 }
