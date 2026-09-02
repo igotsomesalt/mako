@@ -1,0 +1,37 @@
+{
+    "version": 6,
+    "configurePresets": [
+        {
+            "name": "gcc-debug",
+            "displayName": "GCC Debug",
+            "generator": "Ninja",
+            "binaryDir": "${sourceDir}/build/gcc-debug",
+            "cacheVariables": {
+                "CMAKE_C_COMPILER": "gcc",
+                "CMAKE_CXX_COMPILER": "g++",
+                "CMAKE_BUILD_TYPE": "Debug"
+            }
+        },
+        {
+            "name": "gcc-release",
+            "displayName": "GCC Release",
+            "generator": "Ninja",
+            "binaryDir": "${sourceDir}/build/gcc-release",
+            "cacheVariables": {
+                "CMAKE_C_COMPILER": "gcc",
+                "CMAKE_CXX_COMPILER": "g++",
+                "CMAKE_BUILD_TYPE": "Release"
+            }
+        }
+    ],
+    "buildPresets": [
+        {
+            "name": "gcc-debug",
+            "configurePreset": "gcc-debug"
+        },
+        {
+            "name": "gcc-release",
+            "configurePreset": "gcc-release"
+        }
+    ]
+}
