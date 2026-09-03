@@ -2,7 +2,7 @@
 
 namespace mako {
 
-    cosnst CommandResult AddCommand::execute(const CommandExecutionContext& ctx) const override {
-        return { true, 0, "", ""};
+    bool AddCommand::execute(const CommandExecutionContext& ctx) {
+        return true;
     }
 }

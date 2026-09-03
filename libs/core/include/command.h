@@ -3,6 +3,8 @@
 #include <string>
 #include <vector>
 #include <memory>
+#include <ostream>
+#include <runtime.h>
 
 namespace mako {
 
@@ -37,22 +39,31 @@ namespace mako {
         }
 
         // Execute the command.
-        virtual CommandResult execute(const std::vector<std::string>& args) = 0;
+        virtual bool execute(const CommandExecutionContext&) = 0;
 
     };
 
     // Execution context.
     class CommandExecutionContext {
     private:
-        MakoRuntime* runtime;
-        std::ostream* out;
-        std::ostream* err;
+        runtime::Runtime& runtime;
+        std::ostream& out;
+        std::ostream& err;
 
-        std::vector<std::string> args;
-        bool interactive;
+        const std::vector<std::string> args;
+        const bool interactive;
 
     public:
-        inline MakoRuntime& runtime() {
+        CommandExecutionContext(
+            runtime::Runtime& _runtime,
+            std::ostream& _out,
+            std::ostream& _err,
+
+            const std::vector<std::string> _args, const bool _interactive
+        ) : runtime(_runtime), out(_out), err(_err), 
+            args(_args), interactive(_interactive) {}
+
+        inline const mako::runtime::Runtime& runtime() {
             return runtime;
         }
 
@@ -68,10 +79,10 @@ namespace mako {
             return args;
         }
         
-        inline bool interactive() const {
+        inline const bool interactive() const {
             return interactive;
         }
-    }
+    };
 
     // Adds a node to the graph.
     class AddCommand : public Command {
@@ -80,10 +91,11 @@ namespace mako {
         explicit AddCommand() :
             Command(
                 "add", 
-                "Adds a node to the graph"
+                "Adds a node to the graph", 
+                "add <node>"
             ) {}
-        ~Command() = default;
+        ~AddCommand() = default;
 
-        const CommandResult execute(const CommandExecutionContext& ctx) const override;
-    }
+        bool execute(const CommandExecutionContext&) override;
+    };
 }
