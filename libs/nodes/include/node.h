@@ -7,6 +7,7 @@
 #include <string>
 #include <memory>
 #include <cstdint>
+#include <vector>
 
 namespace mako::node {
 
