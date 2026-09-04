@@ -2,7 +2,7 @@
 
 namespace mako {
 
-    bool AddCommand::execute(const CommandExecutionContext& ctx) {
+    int AddCommand::execute(const CommandExecutionContext& ctx) {
         return true;
     }
 }

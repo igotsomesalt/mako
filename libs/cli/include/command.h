@@ -4,6 +4,8 @@
 #include <vector>
 #include <memory>
 #include <ostream>
+#include <span>
+#include <token.h>
 #include <runtime.h>
 
 namespace mako {
@@ -11,41 +13,27 @@ namespace mako {
      // Execution context.
     class CommandExecutionContext {
     private:
-        runtime::Runtime& runtime;
-        std::ostream& out;
-        std::ostream& err;
-
-        const std::vector<std::string> args;
-        const bool interactive;
+        runtime::Runtime& _runtime;
+        std::ostream& _out;
+        std::ostream& _err;
 
     public:
         CommandExecutionContext(
-            runtime::Runtime& _runtime,
-            std::ostream& _out,
-            std::ostream& _err,
+            runtime::Runtime& runtime,
+            std::ostream& out,
+            std::ostream& err
+        ) : _runtime(runtime), _out(out), _err(err) {}
 
-            const std::vector<std::string> _args, const bool _interactive
-        ) : runtime(_runtime), out(_out), err(_err), 
-            args(_args), interactive(_interactive) {}
-
-        inline const mako::runtime::Runtime& runtime() {
-            return runtime;
+        inline runtime::Runtime& runtime() {
+            return _runtime;
         }
 
         inline std::ostream& out() {
-            return out;
+            return _out;
         }
 
         inline std::ostream& err() {
-            return err;
-        }
-        
-        inline const std::vector<std::string>& args() const {
-            return args;
-        }
-        
-        inline const bool interactive() const {
-            return interactive;
+            return _err;
         }
     };
 
@@ -53,10 +41,11 @@ namespace mako {
     // An executable command interface that defines an execution contract
     // as well as metadata contracts.
     class Command {
-    private:
+    protected:
         const std::string _name;
         const std::string _description;
         const std::string _usage;
+        std::span<Token> args;
 
     public:
 
@@ -80,8 +69,11 @@ namespace mako {
         };
 
         // Execute the command.
-        virtual bool execute(const CommandExecutionContext&) = 0  ;
+        virtual int execute(const CommandExecutionContext&) = 0;
 
+        inline void set_args(std::span<Token> args) {
+            this->args = args;
+        }
     };
 
     // Adds a node to the graph.
@@ -96,6 +88,6 @@ namespace mako {
             ) {}
         ~AddCommand() = default;
 
-        bool execute(const CommandExecutionContext&) override;
+        int execute(const CommandExecutionContext&) override;
     };
 }

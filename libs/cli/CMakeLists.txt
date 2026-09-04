@@ -1,5 +1,8 @@
 add_library(cli STATIC
-    src/Graph.cpp
+    src/Cli.cpp
+    src/CommandParser.cpp
+    src/CommandLexer.cpp
+    src/Command.cpp
 )
 
 target_include_directories(cli
