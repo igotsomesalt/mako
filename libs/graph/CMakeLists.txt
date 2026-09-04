@@ -9,9 +9,5 @@ target_include_directories(graph
 target_link_libraries(graph
     PUBLIC
         core
-)
-
-target_link_libraries(graph
-    PUBLIC
         nodes
 )
