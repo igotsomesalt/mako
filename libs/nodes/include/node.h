@@ -32,6 +32,7 @@ namespace mako::node {
         ShutdownFailed,
         RecoveryFailed,
         MissingInput,
+        BadInput
     };
 
     
@@ -155,5 +156,8 @@ namespace mako::node {
 
         // Called after internal state has been restored.
         virtual std::expected<void, ErrorCode>  resume() { return {}; }
+        
+        // Give input to the node.
+        virtual std::expected<void, ErrorCode> in(Value) { return {}; }
     };
 }
