@@ -1,7 +1,6 @@
 add_library(nodes STATIC
 	src/Node.cpp
-
-    "include/goal_node.h"
+    src/GoalNode.cpp
 )
 
 target_include_directories(nodes
