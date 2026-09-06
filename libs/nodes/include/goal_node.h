@@ -19,34 +19,11 @@ namespace mako::node {
 		std::string instruction;
 
 	public:
-		explicit GoalNode(std::string _instruction) : instruction(std::move(_instruction)) {}
-		~GoalNode() = default;
+		explicit GoalNode() : instruction() {}
+		~GoalNode() override = default;
 
-		inline constexpr Schema schema() const override {
-			return {
-				.name = "goal node",
-				.description = "Requests information from the user.",
-
-				.traits = {
-					.deterministic = false,
-					.idempotent = true,
-					.cacheable = false,
-					.checkpointable = true,
-
-					.durability = DurabilityPolicy::Recoverable
-				},
-
-				.inputs = {
-					{
-						.name = "user goal",
-						.description = "A description of what the user hopes to accomplish.",
-						.required = true,
-						.inferable = false,
-						.defaultValue = std::nullopt,
-						.prompt = ""
-					}
-				},
-			};
-		}
+		constexpr Schema schema() const override;
+		std::expected<void, ErrorCode> execute(ExecutionContext& ctx) override;
+		std::expected<void, ErrorCode> in(Value value) override;
 	};
 }
