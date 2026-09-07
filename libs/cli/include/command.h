@@ -69,7 +69,7 @@ namespace mako {
         };
 
         // Execute the command.
-        virtual int execute(const CommandExecutionContext&) = 0;
+        virtual int execute(CommandExecutionContext&) = 0;
 
         inline void set_args(std::span<Token> args) {
             this->args = args;
@@ -88,6 +88,6 @@ namespace mako {
             ) {}
         ~AddCommand() = default;
 
-        int execute(const CommandExecutionContext&) override;
+        int execute(CommandExecutionContext&) override;
     };
 }
