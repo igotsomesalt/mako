@@ -11,7 +11,7 @@ namespace mako {
             auto tokens = lexer.tokenize(input);
 
             if (!tokens) {
-                std::cout << std::format("Lexer error");
+                std::cout << std::format("Lexer error") << std::endl;
                 continue;
             }
 
