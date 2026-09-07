@@ -7,11 +7,14 @@ namespace mako {
         end = current + src.size();
         
         while (current != end) {
-                    if (std::isalpha(*current))    resolve_alpha();
-            else    if (std::isdigit(*current))    resolve_digit(); 
-            else    if (*current == '-')           resolve_dash(); 
-            else    return std::nullopt;
+                 if (std::isalpha(*current))    resolve_alpha();
+            else if (std::isdigit(*current))    resolve_digit(); 
+            else if (*current == '-')           resolve_dash(); 
+            else if (*current == ' ')           current++;
+            else return std::nullopt;
         }
+
+        tokens.push_back({.type = TokenType::ENDLINE });
 
         return tokens;
     }
