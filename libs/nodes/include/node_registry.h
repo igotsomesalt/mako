@@ -5,7 +5,7 @@
 #include <functional>
 #include <node.h>
 
-namespace mako::node {
+namespace mako {
 
     class NodeRegistry {
 
