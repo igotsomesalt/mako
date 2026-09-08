@@ -4,28 +4,28 @@
 
 namespace mako {
 
-	node::Id graph::Graph::add_node(std::unique_ptr<node::Node> node) {
-		node::Id id = nextId++;
+	Id Graph::add_node(std::unique_ptr<Node> node) {
+		Id id = nextId++;
 
 		nodes[id] = std::move(node);
 		return id;
 	}
 
-	std::expected<void, graph::ErrorCode> graph::Graph::remove_node(node::Id nodeId) {
+	std::expected<void, GraphErrorCode> Graph::remove_node(Id nodeId) {
 		int success = nodes.erase(nodeId);
-		if (!success) return std::unexpected(graph::ErrorCode::NodeNotFound);
+		if (!success) return std::unexpected(GraphErrorCode::NodeNotFound);
 		incoming.erase(nodeId);
 		outgoing.erase(nodeId);
 		return {};
 	}
 
-	std::expected<void, graph::ErrorCode> graph::Graph::add_edge(Edge edge) {
+	std::expected<void, GraphErrorCode> Graph::add_edge(Edge edge) {
 		if (!contains(edge.originNodeId) || !contains(edge.destNodeId)) {
-			return std::unexpected(ErrorCode::NodeNotFound);
+			return std::unexpected(GraphErrorCode::NodeNotFound);
 		}
 
 		if (is_reachable(edge.destNodeId, edge.originNodeId)) {
-			return std::unexpected(ErrorCode::WouldCreateCycle);
+			return std::unexpected(GraphErrorCode::WouldCreateCycle);
 		}
 
 		edges.push_back(std::make_unique<Edge>(edge));
@@ -40,7 +40,7 @@ namespace mako {
 		return {};
 	}
 
-	std::expected<void, graph::ErrorCode> graph::Graph::remove_edge(Edge edge) {
+	std::expected<void, GraphErrorCode> Graph::remove_edge(Edge edge) {
 		Edge* ptr = nullptr;
 
 		for (Edge* candidate : outgoing[edge.originNodeId])
@@ -52,37 +52,37 @@ namespace mako {
 			}
 		}
 
-		if (!ptr) return std::unexpected(ErrorCode::EdgeNotFound);
+		if (!ptr) return std::unexpected(GraphErrorCode::EdgeNotFound);
 		return {};
 	}
 
-	std::expected<std::span<graph::Edge* const>, graph::ErrorCode> graph::Graph::get_input_edges(node::Id nodeId) const {
+	std::expected<std::span<Edge* const>, GraphErrorCode> Graph::get_input_edges(Id nodeId) const {
 		auto node = nodes.find(nodeId);
-		if (node == nodes.end()) return std::unexpected(ErrorCode::NodeNotFound);
+		if (node == nodes.end()) return std::unexpected(GraphErrorCode::NodeNotFound);
 
 		auto it = incoming.find(nodeId);
 		if (it == incoming.end()) return std::span<Edge* const>{};
 
-		return std::span<graph::Edge* const>(it->second);
+		return std::span<Edge* const>(it->second);
 	};
 
-	std::expected<std::span<graph::Edge* const>, graph::ErrorCode> graph::Graph::get_output_edges(node::Id nodeId) const {
+	std::expected<std::span<Edge* const>, GraphErrorCode> Graph::get_output_edges(Id nodeId) const {
 		auto node = nodes.find(nodeId);
-		if (node == nodes.end()) return std::unexpected(ErrorCode::NodeNotFound);
+		if (node == nodes.end()) return std::unexpected(GraphErrorCode::NodeNotFound);
 
 		auto it = outgoing.find(nodeId);
-		if (it == outgoing.end()) return std::span<graph::Edge*>{};
+		if (it == outgoing.end()) return std::span<Edge*>{};
 
-		return std::span<graph::Edge* const>(it->second);
+		return std::span<Edge* const>(it->second);
 	};
 
-	bool graph::Graph::contains(node::Id nodeId) const {
+	bool Graph::contains(Id nodeId) const {
 		return nodes.contains(nodeId);
 	}
 
-	bool graph::Graph::is_reachable(node::Id start, node::Id target) const {
-		std::unordered_set<node::Id> visited;
-		std::stack<node::Id> stack;
+	bool Graph::is_reachable(Id start, Id target) const {
+		std::unordered_set<Id> visited;
+		std::stack<Id> stack;
 
 		stack.push(start);
 
@@ -104,7 +104,7 @@ namespace mako {
 			// Push children to stack.
 			auto children = get_output_edges(current);
 			if (children) {
-				for (const graph::Edge* next : *children) {
+				for (const Edge* next : *children) {
 					stack.push(next->destNodeId);
 				}
 			}
