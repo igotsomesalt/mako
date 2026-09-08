@@ -2,7 +2,7 @@
 
 #include <node.h>
 
-namespace mako::node {
+namespace mako {
 
 	// ______________________________________________________________________
 	// Entry point for graph construction. The GoalNode captures the user's

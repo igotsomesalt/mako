@@ -9,7 +9,7 @@
 #include <cstdint>
 #include <vector>
 
-namespace mako::node {
+namespace mako {
 
 
     using Id = uint32_t;
