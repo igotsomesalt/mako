@@ -15,7 +15,7 @@ namespace mako {
         CommandParser parser;
         CommandLexer lexer;
         CommandExecutionContext ctx;
-        runtime::Runtime runtime;
+        Runtime runtime;
 
     public:
         inline CliApplication() : cmds(), parser(cmds), lexer(), runtime(), ctx(runtime, std::cout, std::cout) {

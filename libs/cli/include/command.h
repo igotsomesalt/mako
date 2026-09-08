@@ -13,18 +13,18 @@ namespace mako {
      // Execution context.
     class CommandExecutionContext {
     private:
-        runtime::Runtime& _runtime;
+        Runtime& _runtime;
         std::ostream& _out;
         std::ostream& _err;
 
     public:
         CommandExecutionContext(
-            runtime::Runtime& runtime,
+            Runtime& runtime,
             std::ostream& out,
             std::ostream& err
         ) : _runtime(runtime), _out(out), _err(err) {}
 
-        inline runtime::Runtime& runtime() {
+        inline Runtime& runtime() {
             return _runtime;
         }
 
