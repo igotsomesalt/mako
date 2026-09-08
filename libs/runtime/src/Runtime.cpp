@@ -1,8 +1,8 @@
 #include <runtime.h>
 
 namespace mako {
-    runtime::Result runtime::Runtime::add_node(const std::string& name) {
-        std::unique_ptr<node::Node> node = nodeRegistry.create(name);
+    Result Runtime::add_node(const std::string& name) {
+        std::unique_ptr<Node> node = nodeRegistry.create(name);
 
         if (node == nullptr) {
             return {
@@ -16,7 +16,7 @@ namespace mako {
         return add_node(std::move(node));
     }
 
-    runtime::Result runtime::Runtime::add_node(std::unique_ptr<node::Node> node) {
+    Result Runtime::add_node(std::unique_ptr<Node> node) {
         uint32_t nodeId = graph.add_node(std::move(node));
 
         return {
